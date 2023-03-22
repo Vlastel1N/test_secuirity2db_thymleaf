@@ -21,44 +21,43 @@ public class StudentController {
     @Autowired
     private StudentRepository studentRepository;
 
-    @GetMapping("/list")
+    @GetMapping( "/list")
     public ModelAndView getAllStudents() {
         log.info("/list -> connection");
-        ModelAndView mav = new ModelAndView("list-students");
-        mav.addObject("students", studentRepository.findAll());
+        ModelAndView mav = new ModelAndView( "list-students");
+        mav.addObject( "students", studentRepository.findAll());
         return mav;
     }
 
-    @GetMapping("/addStudentForm")
-    public ModelAndView addStudentForm() {
-        ModelAndView mav = new ModelAndView("add-student-form");
+    @GetMapping( "/addStudentForm")
+    public ModelAndView addStudentForm(){
+        ModelAndView mav = new ModelAndView( "add-student-form");
         Student student = new Student();
-        mav.addObject("student", student);
+        mav.addObject( "student", student);
         return mav;
     }
 
-    @PostMapping("/saveStudent")
+    @PostMapping( "/saveStudent")
     public String saveStudent(@ModelAttribute Student student) {
         studentRepository.save(student);
         return "redirect:/list";
     }
 
-    @GetMapping("/showUpdateForm")
-    public ModelAndView showUpdateForm(@RequestParam Long studentId) {
-        ModelAndView mav = new ModelAndView("add-student-form");
+    @GetMapping( "/showUpdateForm")
+    public  ModelAndView showUpdateForm(@RequestParam Long studentId) {
+        ModelAndView mav = new ModelAndView( "add-student-form");
         Optional<Student> optionalStudent = studentRepository.findById(studentId);
         Student student = new Student();
-        if (optionalStudent.isPresent()) {
+        if(optionalStudent.isPresent()) {
             student = optionalStudent.get();
         }
-        mav.addObject("student", student);
+        mav.addObject( "student", student);
         return mav;
     }
 
-    @GetMapping("/deleteStudent")
+    @GetMapping( "/deleteStudent")
     public String deleteStudent(@RequestParam Long studentId) {
         studentRepository.deleteById(studentId);
         return "redirect:/list";
     }
-
 }

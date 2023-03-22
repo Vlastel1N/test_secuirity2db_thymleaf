@@ -16,22 +16,15 @@ import java.util.List;
 
 @Controller
 public class SecurityController {
-
     private UserService userService;
 
-    public SecurityController(UserService userService) {
-        this.userService = userService;
-    }
+    public SecurityController(UserService userService) {this.userService = userService;}
 
     @GetMapping("/index")
-    public String home() {
-        return "index";
-    }
+    public String home() {return "index";}
 
     @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
+    public String login() {return "login";}
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -46,24 +39,22 @@ public class SecurityController {
                                Model model) {
         User existingUser = userService.findUserByEmail(userDto.getEmail());
 
-        if(existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()) {
+        if (existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()) {
             result.rejectValue("email", null,
-                    "На этот адрес электронной почты уже зарегистрированна учетная запись.");
+                    "На этот адрес электронной почты уже зарегестрирована учетная запись");
         }
-
-        if(result.hasErrors()) {
+        if (result.hasErrors()) {
             model.addAttribute("user", userDto);
             return "/register";
         }
-
         userService.saveUser(userDto);
         return "redirect:/register?success";
     }
 
-    @GetMapping
-    public String users(Model model) {
+    @GetMapping("/users")
+    public String users (Model model){
         List<UserDto> users = userService.findAllUsers();
-        model.addAttribute("users", users);
+        model.addAttribute("users",users);
         return "users";
     }
 }
