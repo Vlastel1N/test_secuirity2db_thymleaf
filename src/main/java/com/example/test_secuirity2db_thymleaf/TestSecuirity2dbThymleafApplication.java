@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TestSecuirity2dbThymleafApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TestSecuirity2dbThymleafApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(TestSecuirity2dbThymleafApplication.class, args);
+    }
 
 }
