@@ -44,7 +44,7 @@ public class SecurityController {
                     "На этот адрес электронной почты уже зарегестрирована учетная запись");
         }
         if (result.hasErrors()) {
-            model.addAttribute("user", userDto);
+            model.addAttribute("user",userDto);
             return "/register";
         }
         userService.saveUser(userDto);
