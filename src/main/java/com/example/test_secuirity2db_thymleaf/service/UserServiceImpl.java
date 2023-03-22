@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,7 @@ public class UserServiceImpl  implements UserService {
         if(role == null) {
             role = checkRoleExist();
         }
-        user.setRoles(Array.asList(role));
+        user.setRoles(Arrays.asList(role));
         userRepository.save(user);
     }
 
@@ -65,6 +66,12 @@ public class UserServiceImpl  implements UserService {
         userDto.setLastName(str[1]);
         userDto.setEmail(user.getEmail());
         return userDto;
+    }
+
+    private Role checkRoleExist() {
+        Role role = new Role();
+        role.setName("ROLE_ADMIN");
+        return roleRepository.save(role);
     }
 
 }

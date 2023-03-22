@@ -1,69 +1,64 @@
 package com.example.test_secuirity2db_thymleaf.controller;
 
 
-import com.example.test_secuirity2db_thymleaf.dto.UserDto;
-import com.example.test_secuirity2db_thymleaf.entity.User;
-import com.example.test_secuirity2db_thymleaf.service.UserService;
+import com.example.test_secuirity2db_thymleaf.entity.Student;
+import com.example.test_secuirity2db_thymleaf.repository.StudentRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
-import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Controller
 public class StudentController {
 
-    private UserService userService;
+    @Autowired
+    private StudentRepository studentRepository;
 
-    public SecurityController(UserService userService) {
-        this.userService = userService;
+    @GetMapping("/list")
+    public ModelAndView getAllStudents() {
+        log.info("/list -> connection");
+        ModelAndView mav = new ModelAndView("list-students");
+        mav.addObject("students", studentRepository.findAll());
+        return mav;
     }
 
-    @GetMapping("/index")
-    public String home() {
-        return "index";
+    @GetMapping("/addStudentForm")
+    public ModelAndView addStudentForm() {
+        ModelAndView mav = new ModelAndView("add-student-form");
+        Student student = new Student();
+        mav.addObject("student", student);
+        return mav;
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
+    @PostMapping("/saveStudent")
+    public String saveStudent(@ModelAttribute Student student) {
+        studentRepository.save(student);
+        return "redirect:/list";
     }
 
-    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        UserDto user = new UserDto();
-        model.addAttribute("user", user);
-        return "register";
-    }
-
-    @PostMapping("/register/save")
-    public String registration(@Valid @ModelAttribute("user") UserDto userDto,
-                               BindingResult result,
-                               Model model) {
-        User existingUser = userService.findUserByEmail(userDto.getEmail());
-
-        if(existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()) {
-            result.rejectValue("email", null,
-                    "На этот адрес электронной почты уже зарегистрированна учетная запись.");
+    @GetMapping("/showUpdateForm")
+    public ModelAndView showUpdateForm(@RequestParam Long studentId) {
+        ModelAndView mav = new ModelAndView("add-student-form");
+        Optional<Student> optionalStudent = studentRepository.findById(studentId);
+        Student student = new Student();
+        if (optionalStudent.isPresent()) {
+            student = optionalStudent.get();
         }
-
-        if(result.hasErrors()) {
-            model.addAttribute("user", userDto);
-            return "/register";
-        }
-
-        userService.saveUser(userDto);
-        return "redirect:/register?success";
+        mav.addObject("student", student);
+        return mav;
     }
 
-    @GetMapping
-    public String users(Model model) {
-        List<UserDto> users = userService.findAllUsers();
-        model.addAttribute("users", users);
-        return "users";
+    @GetMapping("/deleteStudent")
+    public String deleteStudent(@RequestParam Long studentId) {
+        studentRepository.deleteById(studentId);
+        return "redirect:/list";
     }
+
 }
